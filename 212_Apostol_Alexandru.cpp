@@ -1,400 +1,526 @@
 #include <iostream>
-#include <string.h>
 #include <bits/stdc++.h>
+#include <stdlib.h>
+//Apostol Alexandru Sergiu, grupa 212, proiectul nr 2, tema 10;
 using namespace std;
-class carte{
-    private:
-    char* denumire;
-    char* autor_p;
-    char* autor_s;
-    int nr_pag;
-    float pret;
-    float rating;
-public:
-    carte(char*, char* , char*, int, float, float);
-    ~carte();
-    void citire(istream &in);
-    void afisare(ostream& out);
-    friend istream& operator>>(istream& in,carte& c);
-    friend ostream& operator<<(ostream& out, carte& c);
-    carte& operator=(carte &c);
-    carte(carte&);
-    bool operator==( carte&c2);
-    bool operator<( carte &c2);
-    bool operator>( carte &c2);
-    void set_pret(float pretul);
-    void set_denumire(char* denum);
-    void set_autor_p(char* autorp);
-    void set_rating(float ratingul);
-    void set_nr_pag(int nrpag);
-    void set_autor_s(char* autors);
-    char* get_Denumire();
-    char* get_autor_p();
-    float get_rating();
-    int get_nr_pag();
-    char* get_autor_s();
-    float get_pret();
-};
-carte::carte(char* denum=NULL, char* autor1=NULL, char* autor2=NULL, int nrpagini=0, float pretul=0, float ratingul=0)
-        {                                       // CONSTRUCTORUL
-            if (denum != NULL)
-        {this->denumire=new char[strlen(denum)];
-        strcpy(denumire,denum);}
-        else
-            this->denumire=denum;
-        if (autor1!= NULL)
-            {this->autor_p=new char[strlen(autor1)];
-        strcpy(autor_p,autor1);}
-        else
-            this->autor_p=autor1;
-        if (autor2!= NULL)
-            {this->autor_s=new char[strlen(autor2)];
-        strcpy(autor_s,autor2);}
-        else
-            this->autor_s=autor2;
-        this->nr_pag=nrpagini;
-        this->pret=pretul;
-        this->rating=ratingul;
-        }
-carte::~carte() // DESTRUCTOR
+class Complex
 {
-    strcpy(denumire,"");
-    strcpy(autor_p,"");
-    strcpy(autor_s,"");
-    this->nr_pag=0;
-    this->pret=0;
-    this->rating=0;
-}
-void carte::citire(istream &in)
-{   cout<<endl;
-    cout<<"Inserati numele cartii: "<<endl;
-    char *num;
-    num = new char [256];
-    in.getline(num,256);
-    //in.get();
-    //cout <<"citeste\n";
-    this->denumire=new char [strlen(num)];
-    strcpy(denumire,num);
-    //cout<<denumire<<endl;
-    cout<<"Inserati numele autorului principal: "<<endl;
-    char *nump;
-    nump = new char[256];
-    in.getline(nump,256);
-    this->autor_p=new char[strlen(nump)];
-    strcpy(autor_p,nump);
-    //cout<<autor_p<<endl;
-    cout<<"Inserati numele autorului secundar: "<<endl;
-    char *nums;
-    nums = new char [256];
-    in.getline(nums,256);
-    this->autor_s=new char [strlen(nums)];
-    strcpy(autor_s,nums);
-    //cout<<autor_s;
-    cout<<"Inserati numarul de pagini al cartii, numar intreg pozitiv: "<<endl;
-    in>>this->nr_pag;
-    cout<<"Inserati rating-ul cartii, numar real cuprins intre 0 si 10: "<<endl;
-    in>>this->rating;
-    cout<<"Inserati pretul cartii, numar real pozitiv: "<<endl;
-    in>>this->pret;
+private:
+    int re;
+    int im;
 
-}
-istream& operator>>(istream& in,carte& c)
+public:
+    Complex(int, int);
+    Complex(Complex &);
+    ~Complex();
+    void set_real(int);
+    void set_imaginar(int);
+    int get_real() { return re; };
+    int get_imag() { return im; };
+    void afisare(ostream &out);
+    void citire(istream &in);
+    friend istream &operator>>(istream &in, Complex &z);
+    friend ostream &operator<<(ostream &out, Complex &z);
+    double modul();
+    Complex &operator=(Complex &z);
+    friend Complex &operator+(Complex &z1, Complex &z2);
+    friend Complex &operator-(Complex &z1, Complex &z2);
+    friend Complex &operator*(Complex &z1, Complex &z2);
+    friend Complex &operator/(Complex &z1, Complex &z2);
+};
+Complex::Complex(int r = 0, int i = 0)
 {
-    c.citire(in);
+    this->re = r;
+    this->im = i;
+}
+Complex::Complex(Complex &z)
+{
+    this->re = z.re;
+    this->im = z.im;
+}
+Complex::~Complex()
+{
+    this->re = 0;
+    this->im = 0;
+}
+void Complex::set_real(int x)
+{
+    this->re = x;
+}
+void Complex::set_imaginar(int y)
+{
+    this->im = y;
+}
+void Complex::citire(istream &in)
+{
+    cout << "Cititi partea reala: ";
+    in >> re;
+    cout << "Cititi partea imaginara: ";
+    in >> im;
+}
+istream &operator>>(istream &in, Complex &z)
+{
+    z.citire(in);
     return in;
 }
-ostream& operator<<(ostream& out, carte& c){
-    c.afisare(out);
-    return out;
-}
-void carte::afisare(ostream& out)
-{ cout<<"Cartea se numeste: ";
-  out<<this->denumire<<endl;
-  cout<<"Autorul principal este: ";
-  out<<this->autor_p<<endl;
-  cout<<"Autorul secundar este: ";
-  out<<this->autor_s<<endl;
-  cout<<"Numarul de pagini este: ";
-  out<<this->nr_pag<<endl;
-  cout<<"Pretul este: ";
-  out<<this->pret<<endl;
-  cout<<"Rating-ul cartii este: ";
-  out<<this->rating<<endl;
-  cout<<"\n";
-
-}
-carte& carte::operator=(carte &c)
+void Complex::afisare(ostream &out)
 {
-    if(this !=&c)
+    if (im == 0)
     {
-        denumire=new char[strlen(c.denumire)];
-        strcpy(denumire, c.denumire);
-        autor_p=new char[strlen(c.autor_p)];
-        strcpy(autor_p,c.autor_p);
-        autor_s=new char[strlen(c.autor_s)];
-        strcpy(autor_s,c.autor_s);
-        nr_pag=c.nr_pag;
-        rating=c.rating;
-        pret=c.pret;
+        out << re;
+    }
+    else
+    {
+        if (im < 0)
+        {
+            out << re << im << "*i";
+        }
+        else
+        {
+            out << re << "+" << im << "*i";
+        }
     }
 }
-carte::carte(carte &c)
+ostream &operator<<(ostream &out, Complex &z)
 {
-        denumire=new char[strlen(c.denumire)];
-        strcpy(denumire, c.denumire);
-        autor_p=new char[strlen(c.autor_p)];
-        strcpy(autor_p,c.autor_p);
-        autor_s=new char[strlen(c.autor_s)];
-        strcpy(autor_s,c.autor_s);
-        nr_pag=c.nr_pag;
-        rating=c.rating;
-        pret=c.pret;
+    z.afisare(out);
+    return out;
 }
-void carte::set_pret(float pretul){
-    pret=pretul;
-}
-void carte::set_denumire(char* denum){
-    denumire=new char[strlen(denum)];
-        strcpy(denumire, denum);
-}
-void carte::set_autor_p(char* autorp){
-    autor_p=new char[strlen(autorp)];
-        strcpy(autor_p, autorp);
-}
-void carte::set_rating(float ratingul){
-    rating=ratingul;
-}
-void carte::set_nr_pag(int nrpag){
-    nr_pag=nrpag;
-}
-void carte::set_autor_s(char* autors)
+double Complex::modul()
 {
-    autor_s=new char[strlen(autors)];
-        strcpy(autor_s, autors);
+    return sqrt(re * re + im * im);
 }
-float carte::get_rating()
+Complex &Complex::operator=(Complex &z)
 {
-    return this->rating;
+    this->re = z.re;
+    this->im = z.im;
+    return *this;
 }
-char* carte::get_Denumire()
+inline Complex &operator+(Complex &z1, Complex &z2)
 {
-    return this->denumire;
+    Complex *z = new Complex;
+    z->re = z1.re + z2.re;
+    z->im = z1.im + z2.im;
+    return *z;
 }
-char* carte::get_autor_p()
+inline Complex &operator-(Complex &z1, Complex &z2)
 {
-    return this->autor_p;
+    Complex *z = new Complex;
+    z->re = z1.re - z2.re;
+    z->im = z1.im - z2.im;
+    return *z;
 }
-char* carte::get_autor_s()
+inline Complex &operator*(Complex &z1, Complex &z2)
 {
-    return this->autor_s;
+    Complex *z = new Complex;
+    z->re = z1.re * z2.re - z1.im * z2.im;
+    z->im = z1.re * z2.im + z2.re * z1.im;
+    return *z;
 }
-float carte::get_pret()
+Complex &operator/(Complex &z1, Complex &z2)
 {
-    return this->pret;
+    Complex *z = new Complex;
+    z->re = (z1.re * z2.re + z1.im * z2.im) / (z2.re * z2.re + z2.im * z2.im);
+    z->im = (z2.re * z1.im - z1.re * z2.im) / (z2.re * z2.re + z2.im * z2.im);
+    return *z;
 }
-int carte::get_nr_pag()
-{
-    return this->nr_pag;
-}
-bool carte::operator>(carte &c1)
-{
-    if(rating>c1.rating)
-        return true;
-        else
-        return false;
-}
-bool carte::operator<(carte &c1)
-{
-    if(rating<c1.rating)
-        return true;
-        else
-        return false;
-}
-bool carte::operator==(carte&c1)
-{
-    if(rating==c1.rating)
-        return true;
-        else
-        return false;
 
+class Matrice
+{
+protected:
+    Complex **v;
+    static int nrmat; // Variabila statica pt a retine cate matrici au fost create
+public:
+    Matrice()
+    {
+        nrmat++;
+        v = NULL;
+    };
+    Matrice(Complex **v)
+    {
+        nrmat++;
+        this->v = v;
+    };
+    Matrice(const Matrice &M)
+    {
+        this->v = M.v;
+    };
+    Matrice &operator=(const Matrice &M)
+    {
+        this->v = M.v;
+        return *this;
+    }
+    virtual ~Matrice(){};
+    virtual void afisare(ostream &out){};
+    virtual void citire(istream &in){};
+    friend istream &operator>>(istream &in, Matrice &M)
+    {
+        M.citire(in);
+        return in;
+    }
+    friend ostream &operator<<(ostream &out, Matrice &M)
+    {
+        M.afisare(out);
+        return out;
+    }
+    static void numarMatrici()
+    {
+        cout << nrmat;
+    }
+};
+int Matrice ::nrmat;
+class Matrice_oarecare : public Matrice
+{
+    int lin;
+    int col;
+
+public:
+    Matrice_oarecare(Complex **, int, int);
+    ~Matrice_oarecare(){};
+    Matrice_oarecare &operator=(const Matrice_oarecare &MO)
+    {
+        Matrice::operator=(MO);
+        this->lin = lin;
+        this->col = col;
+        return *this;
+    }
+    Matrice_oarecare(const Matrice_oarecare &MO) : Matrice(MO)
+    {
+        this->lin = lin;
+        this->col = col;
+    }
+    void afisare(ostream &out)
+    {
+        Matrice::afisare(out);
+        for (int i = 0; i < lin; i++)
+        {
+            for (int j = 0; j < col; j++)
+            {
+                cout << v[i][j] << " ";
+            }
+            cout << endl
+                 << " Matricea aste Oarecare";
+            cout << endl;
+        }
+    }
+
+    void citire(istream &in)
+    {
+        Matrice::citire(in);
+        cout << "Introduceti numarul de linii:" << endl;
+        in >> lin;
+        cout << "Introduceti numarul de coloane:" << endl;
+        in >> col;
+        alocaMatrice();
+        int x, y;
+        cout << "introduceti, pe rand, partea reala si partea imaginara a fiecarui numar:" << endl;
+        for (int i = 0; i < lin; i++)
+            for (int j = 0; j < col; j++)
+            {
+                cout << "Partea reala:" << endl;
+                in >> x;
+                v[i][j].set_real(x);
+                cout << "Partea imaginar:" << endl;
+                in >> y;
+                v[i][j].set_imaginar(y);
+            }
+    };
+    friend istream &operator>>(istream &in, Matrice_oarecare &MO);
+    friend ostream &operator<<(ostream &out, Matrice_oarecare &MO);
+    void setlin(int l)
+    {
+        lin = l;
+    }
+    void setcol(int c)
+    {
+        col = c;
+    }
+    void alocaMatrice()
+    {
+        v = new Complex *[lin];
+        for (int i = 0; i < col; i++)
+        {
+            v[i] = new Complex[col];
+        }
+    }
+};
+istream &operator>>(istream &in, Matrice_oarecare &MO)
+{
+    MO.citire(in);
+    return in;
+}
+ostream &operator<<(ostream &out, Matrice_oarecare &MO)
+{
+    MO.afisare(out);
+    return out;
+}
+Matrice_oarecare::Matrice_oarecare(Complex **v = NULL, int lin = 0, int col = 0) : Matrice(v)
+{
+    this->lin = lin;
+    this->col = col;
+    alocaMatrice();
+    for (int i = 0; i < lin; i++)
+        for (int j = 0; j < col; j++)
+            this->v[i][j] = v[i][j];
+}
+class Matrice_patratica : public Matrice
+{
+    int dim;
+
+public:
+    Matrice_patratica(Complex **, int);
+    ~Matrice_patratica(){};
+    Matrice_patratica &operator=(const Matrice_patratica &MP)
+    {
+        Matrice::operator=(MP);
+        this->dim = dim;
+        return *this;
+    }
+    Matrice_patratica(const Matrice_patratica &MP) : Matrice(MP)
+    {
+        this->dim = dim;
+    }
+    void afisare(ostream &out)
+    {
+        Matrice::afisare(out);
+        for (int i = 0; i < dim; i++)
+        {
+            for (int j = 0; j < dim; j++)
+            {
+                cout << v[i][j] << " ";
+            }
+            cout << endl
+                 << " Matricea aste Patratica";
+            cout << endl;
+        }
+    }
+
+    void citire(istream &in)
+    {
+        Matrice::citire(in);
+        cout << "Introduceti dimensiunea matricei" << endl;
+        in >> dim;
+        alocaMatricea();
+        int x, y;
+        cout << "introduceti, pe rand, partea reala si partea imaginara a fiecarui numar:" << endl;
+        for (int i = 0; i < dim; i++)
+            for (int j = 0; j < dim; j++)
+            {
+                cout << "Partea reala:" << endl;
+                in >> x;
+                v[i][j].set_real(x);
+                cout << "Partea imaginar:" << endl;
+                in >> y;
+                v[i][j].set_imaginar(y);
+            }
+    };
+    friend istream &operator>>(istream &in, Matrice_patratica &MP);
+    friend ostream &operator<<(ostream &out, Matrice_patratica &MP);
+    void setdim(int d)
+    {
+        dim = d;
+    }
+    void alocaMatricea()
+    {
+        v = new Complex *[dim];
+        for (int i = 0; i < dim; i++)
+        {
+            v[i] = new Complex[dim];
+        }
+    }
+    bool verificarediag()
+    {
+        int ok = 1;
+        for (int i = 0; i < dim; i++)
+            for (int j = 0; j < dim; j++)
+            {
+                if (i != j && v[i][j].get_real() != 0 && v[i][j].get_imag() != 0)
+                    ok = 0;
+            }
+        if (ok == 0)
+            return false;
+        else
+            return true;
+    }
+    bool trisup()
+    {
+        int ok = 1;
+        for (int i = 0; i < dim; i++)
+            for (int j = 0; j < dim; j++)
+            {
+                if (i > j && (v[i][j].get_real() != 0 || v[i][j].get_imag() != 0))
+                    ok = 0;
+            }
+        if (ok == 0)
+            return false;
+        else
+            return true;
+    }
+    bool triinf()
+    {
+        int ok = 1;
+        for (int i = 0; i < dim; i++)
+            for (int j = 0; j < dim; j++)
+            {
+                if (i < j && (v[i][j].get_real() != 0 || v[i][j].get_imag() != 0))
+                    ok = 0;
+            }
+        if (ok == 0)
+            return false;
+        else
+            return true;
+    }
+};
+istream &operator>>(istream &in, Matrice_patratica &MP)
+{
+    MP.citire(in);
+    return in;
+}
+ostream &operator<<(ostream &out, Matrice_patratica &MP)
+{
+    MP.afisare(out);
+    return out;
+}
+Matrice_patratica::Matrice_patratica(Complex **v = NULL, int dim = 0) : Matrice(v)
+{
+    this->dim = dim;
+    alocaMatricea();
+    for (int i = 0; i < dim; i++)
+        for (int j = 0; j < dim; j++)
+            this->v[i][j] = v[i][j];
 }
 void menu_output()
 {
-    cout<<"\n\t MENIU:";
-    cout<<"\n===========================================\n";
-    cout<<"\n";
-    cout<<" Alegeti una dintre urmatoarele optiuni:"<<endl;
-    cout<<"1. Afisam cartile."<<"\n";
-    cout<<"2. Adaugam o carte noua."<<"\n";
-    cout<<"3. Compara doua carti."<<"\n";
-    cout<<"4. Schimba ordinea a doua carti."<<"\n";
-    cout<<"5. Modifica informatiile unei carti."<<"\n";
-    cout<<"0. Iesire."<<"\n";
-
+    cout << "\n\t MENIU:";
+    cout << "\n===========================================\n";
+    cout << "\n";
+    cout << " Alegeti una dintre urmatoarele optiuni:" << endl;
+    cout << "1. Citim  matricile."
+         << "\n";
+    cout << "2. Afisam matricile."
+         << "\n";
+    cout << "3. Cate matrici au fost create?."
+         << "\n";
+    cout << "4. Downcast."
+         << "\n";
+    cout << "5. Verificare matrice diagonala?" << endl;
+    cout << "0. Iesire."
+         << "\n";
 }
-void menu()
+void tip(Matrice *&M, int &i)
 {
-    int option,n,i;
-    cout<<"Introduceti cate carti se vor citi:"<<endl;
-    cin>>n;
-    carte *v=new carte[n];
-    for(i=0;i<n;i++)
+    string s;
+    cout << "\n";
+    cout << "Introduceti tipul matricei, oarecare sau patratica, cu numarul  " << i + 1 << ": ";
+    cin >> s;
+    try
     {
-        cin.get();
-        cin>>v[i];
-    }
-    cout<<"Avem cartile: "<<endl;
-    for(i=0;i<n;i++)
-    {   cout<<"Pozitia: "<<i<<endl;
-        cout<<v[i];
-        cout<<endl;
-    }
-    do{ menu_output();
-    cin>>option;
-    if(option==1)
-    {
-        cout<<"Afisam cele "<<n<<" carti:"<<endl;
-        for(i=0;i<n;i++)
+        if (s == "oarecare")
         {
-            cout<<"Pozitia: "<<i<<endl;
-            cout<<v[i];
-            cout<<endl;
+            M = new Matrice_oarecare;
+            cin >> *M;
+            i++;
         }
-    }
-    if(option==2)
-    {   cout<<"Adaugam o carte:"<<endl;
-        cin.get();
-        cin>>v[n];
-        n=n+1;
-    }
-    if(option==3)
-    {   int c1,c2;
-        cout<<"Comparam doua carti. Alegeti care dintre cele "<<n-1<<" carti doriti sa le comparati."<<endl;
-        cout<<"Prima carte: ";;
-        cin>>c1;
-        cout<<"\n";
-        cout<<"A doua carte: ";
-        cin>>c2;
-        cout<<"\n";
-        if(v[c1]>v[c2])
+        else if (s == "patratica")
         {
-            cout<<"Prima carte are ratingul mai mare: ";
-            float c;
-            c=v[c1].get_rating();
-            cout<<c<<endl;
+            M = new Matrice_patratica;
+            cin >> *M;
+            i++;
         }
         else
-        {
-            if(v[c1]<v[c2])
-            {
-            cout<<"A doua carte are ratingul mai mare: ";
-            float c;
-            c=v[c2].get_rating();
-            cout<<c<<endl;
-            }
-            else
-                if(v[c1]==v[c2])
-                cout<<"Cartile au acelasi rating."<<endl;
-        }
-
-     }
-    if(option==4)
-    {   int k,m;
-        cout<<"Alege doua carti cu indici intre 0 si "<<n-1<<" pentru a schimba ordinea acestora."<<endl;
-        cout<<"Prima:";
-        cin>>k;
-        cout<<endl;
-        cout<<"A doua:";
-        cin>>m;
-        cout<<endl;
-        carte aux;
-        aux=v[k];
-        v[k]=v[m];
-        v[m]=aux;
-        cout<<"Noua ordine este:"<<endl;
-        for(i=0;i<n;i++)
-            cout<<v[i]<<endl;
+            throw 100;
     }
-    if(option==5)
+    catch (bad_alloc var)
     {
-        int c1, pagini;
-        float nr;
-        cout<<endl;
-        cout<<"Avem cartile: "<<endl;
-        for(int i=0;i<n;i++)
-        {   cout<<"Pozitia: "<<i<<endl;
-        cout<<v[i];
-        cout<<endl;
-        }
-        cout<<"Alege un numar al cartii intre 0 si "<<n-1<<"."<<endl<<endl;
-        cout<<"Vrem sa modificam informatii din cartea : ";
-        cin>>c1;
-        char *da = "da", *rasp, *nume;
-        cin.get();
-        cout<<"Vrei sa modifici numele cartii? (da sau nu): ";
-        cin.getline(rasp, 256);
-        if (strcmp(da, rasp) == 0)
-                {
-                    cout<<"Noul nume al cartii este: ";
-                    cin.getline(nume, 256);
-                    v[c1].set_denumire(nume);
-                }
-                cout<<endl;
-                cout<<"Vrei sa modifici numele primului autor? (da sau nu): ";
-                cin.getline(rasp, 256);
-                if (strcmp(da, rasp) == 0)
-                {
-                    cout<<"Noul nume al primului autor al cartii este: ";
-                    cin.getline(nume, 256);
-                    v[c1].set_autor_p(nume);
-                }
-                cout<<endl;
-                cout<<"Vrei sa modifici numele autorului secund? (da sau nu): ";
-                cin.getline(rasp, 256);
-                if(strcmp(da, rasp) == 0)
-                {
-                    cout<<"Noul nume al autorului secund este: ";
-                    cin.getline(nume, 256);
-                    v[c1].set_autor_s(nume);
-                }
-                cout<<endl;
-                cout<<"Vrei sa modifici numarul de pagini al cartii? (da sau nu): ";
-                cin.getline(rasp, 256);
-
-                if(strcmp(da, rasp) == 0)
-                {
-                    cout<<"Noul numar de pagini al cartii este: ";
-                    cin>>pagini;
-                    v[c1].set_nr_pag(pagini);
-                    cin.get();
-                }
-                cout<<endl;
-                cout<<"Vrei sa modifici pretul cartii? da sau nu): ";
-                cin.getline(rasp, 256);
-                if (strcmp(da, rasp) == 0)
-                {
-                    cout<<"Noul pret al cartii este: ";
-                    cin>>nr;
-                    v[c1].set_pret(nr);
-                    cin.get();
-                }
-                cout<<endl;
-                cout<<"Vrei sa modifici nota cartii? (da sau nu): ";
-                cin.getline(rasp, 256);
-                if(strcmp(da,rasp) == 0)
-                {
-                    cout<<"Noua nota a cartii este: ";
-                    cin>>nr;
-                    v[c1].set_rating(nr);
-                }
-            }
-            system("cls");
-    }while(option!=0);
-
+        cout << "Eroare de alocare\n";
+        exit(EXIT_FAILURE);
+    }
+    catch (int j)
+    {
+        cout << "Gresit. Incercati oarecare sau patratica.\n ";
+    }
 }
-
 int main()
 {
-    menu();
+    system("CLS");
+    int option;
+    int n;
+    bool iesire = false;
+    Matrice **H;
+    Matrice_patratica *a = (Matrice_patratica *)new Matrice;
+    Matrice_patratica N;
+    do
+    {
+        menu_output();
+        cin >> option;
+        switch (option)
+        {
+        case 0:
+            cout << endl;
+            cout << "\tExit" << endl;
+            iesire = true;
+            return 0;
+
+        case 1:
+            cout << "Introduceti numarul de matrici: ";
+            cin >> n;
+            try
+            {
+                H = new Matrice *[n];
+                for (int i = 0; i < n;)
+                    tip(H[i], i);
+            }
+            catch (bad_alloc var)
+            {
+                cout << "Eroare de alocare\n";
+                exit(EXIT_FAILURE);
+            }
+            break;
+        case 2:
+            cout << "\nAfisam matricile citite anterior:\n";
+            for (int i = 0; i < n; i++)
+            {
+                cout << "\n"
+                     << *H[i];
+                cout << "--------------------------\n";
+            }
+            break;
+        case 3:
+            cout << "Numarul de matrici create: ";
+            Matrice::numarMatrici();
+
+            break;
+        case 4:
+            cout << "downcast";
+            cin >> *a;
+            cout << "--?----------------\n";
+            cout<< " Nu se citeste nimic. In loc sa citeasca o matrice patratica, incearca sa citeasca un obiect din clasa matrice, dar clasa matrice\n"
+            cout<<" nu are nimic in functia de citire si in supraincarcare, de aici si cauza erorii"<<endl;
+            cout << *a;
+            break;
+        case 5:
+            cout << " Introduceti matricea pentru testare: ( trebuie sa fie patratica) " << endl;
+            cin >> N;
+            if (N.trisup() == true || N.triinf() == true)
+                cout << "Matricea este triunghiulara" << endl;
+            else
+                cout << "Matricea nu este triunghiulara" << endl;
+            if (N.verificarediag() == true)
+                cout << "Matricea este diagonala" << endl;
+            else
+                cout << "Matricea nu este diagonala" << endl;
+            break;
+        default:
+            cout << "Optiune invalida";
+            break;
+        }
+        cout << "\nApasa ENTER pentru a continua...";
+        cin.get();
+        cin.get();
+        if (iesire)
+            break;
+        system("CLS");
+
+    } while (true);
     return 0;
 }
